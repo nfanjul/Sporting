@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
@@ -45,6 +46,10 @@ namespace Sporting.Api
                 {
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                     options.AssumeDefaultVersionWhenUnspecified = true;
+                    // If Versioning by Header
+                    options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+                    // If Versioning by MediaType
+                    //options.ApiVersionReader = new MediaTypeApiVersionReader();
                 }
             );
             services.AddSwaggerGen(c =>
@@ -89,8 +94,7 @@ namespace Sporting.Api
 
                 c.DocInclusionPredicate((docName, apiDesc) => GetPredicate(docName, apiDesc));
 
-                c.OperationFilter<RemoveVersionParameterFilter>();
-                c.DocumentFilter<SetVersionInPathFilter>();
+                c.OperationFilter<ApiVersionOperationFilter>();
 
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)) + ".xml";
