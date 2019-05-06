@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
+using Sporting.Api.Extensions;
+using Sporting.Api.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Sporting.Api
@@ -36,6 +40,13 @@ namespace Sporting.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddApiVersioning(
+                options =>
+                {
+                    options.DefaultApiVersion = new ApiVersion(1, 0);
+                    options.AssumeDefaultVersionWhenUnspecified = true;
+                }
+            );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -56,6 +67,31 @@ namespace Sporting.Api
                         Url = "https://rojiblancosite.wordpress.com"
                     }
                 });
+
+                c.SwaggerDoc("v2", new Info
+                {
+                    Version = "v2",
+                    Title = "SPORTING API",
+                    Description = "API rojiblancosite",
+                    TermsOfService = "#PuxaSporting",
+                    License = new License
+                    {
+                        Name = "MIT",
+                        Url = "https://es.wikipedia.org/wiki/Licencia_MIT"
+                    },
+                    Contact = new Contact
+                    {
+                        Name = "Nacho Fanjul",
+                        Email = "nfanjul@plainconcepts.com",
+                        Url = "https://rojiblancosite.wordpress.com"
+                    }
+                });
+
+                c.DocInclusionPredicate((docName, apiDesc) => GetPredicate(docName, apiDesc));
+
+                c.OperationFilter<RemoveVersionParameterFilter>();
+                c.DocumentFilter<SetVersionInPathFilter>();
+
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)) + ".xml";
                 if (File.Exists(xmlPath))
@@ -63,6 +99,24 @@ namespace Sporting.Api
                     c.IncludeXmlComments(xmlPath);
                 }
             });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool GetPredicate(string docName, ApiDescription apiDescription)
+        {
+            var actionApiVersionModel = apiDescription.ActionDescriptor?.GetApiVersion();
+            if (actionApiVersionModel == null)
+            {
+                return true;
+            }
+            if (actionApiVersionModel.DeclaredApiVersions.Any())
+            {
+                return actionApiVersionModel.DeclaredApiVersions.Any(version => $"v{version.ToString()}".Equals(docName));
+            }
+            return actionApiVersionModel.ImplementedApiVersions.Any(version => $"v{version.ToString()}".Equals(docName));
         }
 
         /// <summary>
@@ -88,6 +142,7 @@ namespace Sporting.Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SPORTING API V1");
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "SPORTING API V2");
                 c.RoutePrefix = string.Empty;
             });
 
