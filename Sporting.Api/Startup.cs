@@ -53,7 +53,7 @@ namespace Sporting.Api
             {
                 c.SwaggerDoc("v1", new Info
                 {
-                    Version = "v1",
+                    Version = "1",
                     Title = "SPORTING API",
                     Description = "API rojiblancosite",
                     TermsOfService = "#PuxaSporting",
@@ -72,7 +72,7 @@ namespace Sporting.Api
 
                 c.SwaggerDoc("v2", new Info
                 {
-                    Version = "v2",
+                    Version = "2",
                     Title = "SPORTING API",
                     Description = "API rojiblancosite",
                     TermsOfService = "#PuxaSporting",
