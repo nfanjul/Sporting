@@ -26,8 +26,8 @@ namespace Sporting.Api.Filters
             if (actionApiVersionModel.DeclaredApiVersions.Any())
             {
                 operation.Produces = operation.Produces
-                  .SelectMany(seclaredApiVersions => actionApiVersionModel.DeclaredApiVersions
-                    .Select(version => $"{seclaredApiVersions};v={version.ToString()}")).ToList();
+                  .SelectMany(declaredApiVersions => actionApiVersionModel.DeclaredApiVersions
+                    .Select(version => $"{declaredApiVersions};v={version.ToString()}")).ToList();
             }
             else
             {
