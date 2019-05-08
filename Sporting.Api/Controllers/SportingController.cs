@@ -9,7 +9,7 @@ namespace Sporting.Api.Controllers
     /// </summary>
     [ApiVersion("1")]
     [ApiVersion("2")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class SportingController : ControllerBase
     {

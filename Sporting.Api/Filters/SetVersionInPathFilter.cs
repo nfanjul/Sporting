@@ -13,12 +13,12 @@ namespace Sporting.Api.Filters
         /// 
         /// </summary>
         /// <param name="swaggerDoc"></param>
-        /// <param name="context"></param>
-        public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        /// <param name="documentFilterContext"></param>
+        public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext documentFilterContext)
         {
-            swaggerDoc.Paths = swaggerDoc.Paths
+                swaggerDoc.Paths = swaggerDoc.Paths
                 .ToDictionary(
-                    path => path.Key.Replace("v{version}", swaggerDoc.Info.Version),
+                    path => path.Key + $"?api-version={swaggerDoc.Info.Version}",
                     path => path.Value
                 );
         }
