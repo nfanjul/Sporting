@@ -46,17 +46,14 @@ namespace Sporting.Api
                 {
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                     options.AssumeDefaultVersionWhenUnspecified = true;
-                    // If Versioning by Header
-                    options.ApiVersionReader = new HeaderApiVersionReader("api-version");
-                    // If Versioning by MediaType
-                    //options.ApiVersionReader = new MediaTypeApiVersionReader();
+                    options.ApiVersionReader = new MediaTypeApiVersionReader();
                 }
             );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
                 {
-                    Version = "v1",
+                    Version = "1",
                     Title = "SPORTING API",
                     Description = "API rojiblancosite",
                     TermsOfService = "#PuxaSporting",
@@ -75,7 +72,7 @@ namespace Sporting.Api
 
                 c.SwaggerDoc("v2", new Info
                 {
-                    Version = "v2",
+                    Version = "2",
                     Title = "SPORTING API",
                     Description = "API rojiblancosite",
                     TermsOfService = "#PuxaSporting",
