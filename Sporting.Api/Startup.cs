@@ -46,7 +46,7 @@ namespace Sporting.Api
                 {
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                     options.AssumeDefaultVersionWhenUnspecified = true;
-                    options.ApiVersionReader = new MediaTypeApiVersionReader();
+                    options.ApiVersionReader = new HeaderApiVersionReader("api-version");
                 }
             );
             services.AddSwaggerGen(c =>
@@ -91,7 +91,8 @@ namespace Sporting.Api
 
                 c.DocInclusionPredicate((docName, apiDesc) => GetPredicate(docName, apiDesc));
 
-                c.OperationFilter<ApiVersionOperationFilter>();
+                c.DocumentFilter<AddVersionHeader>();
+                
 
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)) + ".xml";
@@ -144,7 +145,7 @@ namespace Sporting.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SPORTING API V1");
                 c.SwaggerEndpoint("/swagger/v2/swagger.json", "SPORTING API V2");
-                c.RoutePrefix = string.Empty;
+                c.RoutePrefix = string.Empty;            
             });
 
             app.UseMvc();
